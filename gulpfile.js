@@ -21,8 +21,11 @@ const gulp          = require('gulp'),
 // typescript config
 const tsconfig = require('./tsconfig');
 
-// Tasks
-gulp.task('build:development', ['clean', 'link', 'scss', 'tsconfig-glob', 'hbs-index:dev', 'typescript:dev']);
+// Build Essentials
+gulp.task('build', ['clean', 'link', 'scss', 'ng-templates']);
+
+// Build Types
+gulp.task('build:development', ['build', 'tsconfig-glob', 'hbs-index:dev', 'typescript:dev']);
 
 // Clean
 gulp.task('clean', function () {
@@ -31,26 +34,33 @@ gulp.task('clean', function () {
 	mkdirp.sync('./dist/js');
 	mkdirp.sync('./dist/css');
 	mkdirp.sync('./dist/fonts');
+    mkdirp.sync('./dist/templates');
 
 	return del([
-		'./dist/js/*',
-		'./dist/css/*',
+		'./dist/**/*.js',
+		'./dist/**/*.css',
+        './dist/**/*.html',
+        './dist/**/*.map',
 	]);
 
 });
 
+// ng-templates
+gulp.task('ng-templates', function () {
+    gulp.src('./src/templates/**/*.html')
+        .pipe(gulp.dest('./dist/templates'))
+});
+
 // Link Bower folder
 gulp.task('link', function () {
-
-	var node_modules = 'node_modules',
-        files = [''];
-
-	try {
-		child_process.execSync(['ln -s', path.join(__dirname, node_modules), __dirname + '/dist/node_modules'].join(' '));
-	} catch(e) {
-
-	}
-
+	// var node_modules = 'node_modules',
+    //     files = [''];
+    //
+	// try {
+	// 	child_process.execSync(['ln -s', path.join(__dirname, node_modules), __dirname + '/dist/node_modules'].join(' '));
+	// } catch(e) {
+    //
+	// }
 });
 
 // TypeScript
@@ -91,7 +101,7 @@ function complileHBS(tData) {
 		helpers : {}
 	};
 
-	return gulp.src('./src/index.hbs').pipe(handlebars(tData, opts)).pipe(gulp.dest('./dist'));
+	return gulp.src('./src/index.html').pipe(handlebars(tData, opts)).pipe(gulp.dest('./dist'));
 }
 
 // SCSS

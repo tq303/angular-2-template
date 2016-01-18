@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "dist/js",
     "target": "ES5",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -19,7 +20,7 @@
     "rewriteTsconfig": false
   },
   "buildOnSave": false,
-  "compileOnSave": false,
+  "compileOnSave": true,
   "files": [
     "src/ts/boot.ts",
     "src/ts/component.ts"
