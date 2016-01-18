@@ -26,6 +26,8 @@ TypeScript is compiled using `webpack` and `ts-loader`. The `webpack.config.js` 
 
 ## Notes
 
+This has been designed to work with *TypeScript* and *Atom*, however it is so simple that any flavour could easily be used with `webpack`.
+
 The `tsconfig.json` contains *Atom Editor* specific flags `buildOnSave` and `compileOnSave`. **PLEASE DON'T REMOVE THESE.**
 
 The `tsconfig.json` contains `gulp` specific flag `filesGlod`, this dynamically build the files array and is used by the `typescript` validator. **PLEASE DON'T REMOVE THESE.**
