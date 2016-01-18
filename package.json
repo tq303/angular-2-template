@@ -1,0 +1,41 @@
+{
+  "name": "svg-circular-progress-button",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "postinstall": "bower install"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "del": "^2.2.0",
+    "es7-reflect-metadata": "^1.4.0",
+    "gulp": "^3.9.0",
+    "gulp-compile-handlebars": "^0.6.1",
+    "gulp-concat": "^2.5.2",
+    "gulp-livereload": "^3.8.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-sass": "^2.0.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-tslint": "^4.3.1",
+    "gulp-typescript": "^2.10.0",
+    "gulp-webpack": "^1.5.0",
+    "mkdirp": "^0.5.1",
+    "ts-loader": "^0.7.2",
+    "tsconfig-glob": "^0.4.0",
+    "tslint": "^3.2.1",
+    "typescript": "^1.7.5",
+    "webpack-stream": "^3.1.0"
+  },
+  "dependencies": {
+    "angular2": "^2.0.0-beta.1",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.33.13",
+    "express": "^4.13.3",
+    "reflect-metadata": "^0.1.2",
+    "rxjs": "^5.0.0-beta.0",
+    "webpack": "^1.12.11",
+    "zone.js": "^0.5.10"
+  }
+}

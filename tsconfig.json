@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": false
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "filesGlob": [
+    "src/ts/**/*.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": false
+  },
+  "buildOnSave": false,
+  "compileOnSave": false,
+  "files": [
+    "src/ts/boot.ts",
+    "src/ts/component.ts"
+  ]
+}
