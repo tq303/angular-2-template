@@ -20,6 +20,16 @@ gulp watch
 
 ```
 
+## Server
+
+Default port is set at `8888`. To start run command.
+
+```bash
+
+    node .
+
+```
+
 ## TypeScript
 
 TypeScript is compiled using `webpack` and `ts-loader`. The `webpack.config.js` controls all of the Javascript compilation and is run as a `gulp` task. This eliminates the need for using the `tsd` module.
