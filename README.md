@@ -4,7 +4,9 @@ This is a basic angular 2 template.
 
 ## Install
 ```bash
-    npm install
+
+npm install
+
 ```
 
 ## Gulp
