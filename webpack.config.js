@@ -20,7 +20,11 @@ module.exports = {
     output: {
         filename: './dist/js/[name].js'
     },
-    plugins: [
+    plugins: (process.env.NODE_ENV === 'production') ? [
+        new webpack.optimize.OccurenceOrderPlugin(true),
+        new webpack.optimize.CommonsChunkPlugin("vendor", /* filename= */"./dist/js/vendor.js"),
+        new webpack.optimize.UglifyJsPlugin({minimize: true})
+    ] : [
         new webpack.optimize.OccurenceOrderPlugin(true),
         new webpack.optimize.CommonsChunkPlugin("vendor", /* filename= */"./dist/js/vendor.js")
     ],
