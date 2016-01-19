@@ -26,7 +26,7 @@ Default port is set at `8888`. To start run command.
 
 ```bash
 
-    node .
+node .
 
 ```
 
