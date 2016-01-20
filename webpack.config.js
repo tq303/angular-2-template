@@ -2,8 +2,11 @@
 var webpack = require('webpack');
 
 module.exports = {
+    devtool: 'source-map',
+    debug: true, // set false in production
+    cache: true,
     entry: {
-        'app': './src/ts/boot.ts',
+        'app': './src/ts/index.ts',
         'vendor': [
             'es6-shim',
             'es6-promise',
@@ -23,20 +26,28 @@ module.exports = {
     plugins: (process.env.NODE_ENV === 'production') ? [
         new webpack.optimize.OccurenceOrderPlugin(true),
         new webpack.optimize.CommonsChunkPlugin("vendor", /* filename= */"./dist/js/vendor.js"),
-        new webpack.optimize.UglifyJsPlugin({minimize: true})
+        new webpack.optimize.UglifyJsPlugin({minimize: true}),
+        new webpack.DefinePlugin({
+            BASE_URI: 'http://localhost:8888/'
+        })
     ] : [
         new webpack.optimize.OccurenceOrderPlugin(true),
-        new webpack.optimize.CommonsChunkPlugin("vendor", /* filename= */"./dist/js/vendor.js")
+        new webpack.optimize.CommonsChunkPlugin("vendor", /* filename= */"./dist/js/vendor.js"),
+        new webpack.DefinePlugin({
+            BASE_URI: 'http://localhost:8888/'
+        })
     ],
-    devtool: 'source-map',
     resolve: {
-        // ensure loader extensions match
-        extensions: ['','.ts','.js','.json','.css','.html']
+        extensions: ['','.ts','.js']
     },
     module: {
         loaders: [
-            // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
-            { test: /\.tsx?$/, loader: 'ts-loader' }
+            {
+                test: /\.ts$/,
+                loader: 'ts-loader',
+                exclude: [ /\.(spec|e2e)\.ts$/, /node_modules\/(?!(ng2-.+))/ ]
+            }
         ]
-    }
+    },
+    node: {global: 'window', progress: false, crypto: 'empty', module: false, clearImmediate: false, setImmediate: false}
 }

@@ -1,0 +1,9 @@
+<!-- template -->
+<div class="home">
+    <!-- If there's an auth_token, we display it -->
+    <pre if="auth_token" class="jwt"><code>{{auth_token}}</code></pre>
+    <!-- Anchor to call the secured API -->
+    <p><a (click)="callSecuredApi()">Call Secure API</a></p>
+    <!-- Anchor to log the user out -->
+    <p><a (click)="logout()">Logout</a></p>
+</div>

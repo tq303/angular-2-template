@@ -1,0 +1,40 @@
+#loginbox {
+    > div {
+        &:first-child {
+            padding-bottom: 10px;
+        }
+    }
+
+    .iconmelon {
+        display: block;
+        margin: auto;
+    }
+
+    form {
+        > div {
+            &:last-child {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+        }
+        .input-group {
+            margin-bottom: 24px;
+            button {
+                i {
+                    font-size: 24px;
+                }
+            }
+        }
+    }
+
+    .panel {
+
+        background-color: transparent;
+
+        .panel-body {
+            padding-top: 30px;
+            background-color: rgba(255,255,255,.3);
+        }
+    }
+
+}
