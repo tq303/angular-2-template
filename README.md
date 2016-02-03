@@ -43,6 +43,4 @@ Uses typescript.
 
 ## Notes
 
-This has been designed to work with *TypeScript* and *Atom*, however it is so simple that any flavour could easily be used with `webpack`.
-
 The `tsconfig.json` contains *Atom Editor* specific flags `buildOnSave` and `compileOnSave`. **PLEASE DON'T REMOVE THESE.**
