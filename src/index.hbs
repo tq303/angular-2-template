@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Angular 2 Template</title>
+
+    <link rel="stylesheet" href="./css/main.css">
+
+    {{#each vendorScripts}}
+        {{{script-tag this}}}
+    {{/each}}
+
+    <script>
+
+        window.require = System.amdRequire;
+        window.define  = System.amdDefine;
+
+        System.config({
+            packages: {
+                js: {
+                    format: 'register',
+                    defaultExtension: 'js'
+                }
+            },
+            map: {
+              "angular2-jwt": "../lib/angular2-jwt.js"
+            }
+        });
+
+        System.import('./js/boot').then(null, console.error.bind(console));
+
+    </script>
+
+</head>
+<body>
+
+    <div class="container">
+        <auth-app></auth-app>
+    </div>
+
+</body>
+</html>

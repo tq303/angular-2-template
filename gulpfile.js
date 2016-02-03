@@ -1,10 +1,12 @@
 /**
-* Created by Oliver #FFF 18/1/2016
-* relies on NODE_ENV
-*/
+  * Created by Oliver #FFF 18/1/2016
+  */
+
+'use strict';
 
 // Modules
 const gulp          = require('gulp'),
+      seq           = require('gulp-sequence'),
       sass          = require('gulp-sass'),
       concat        = require('gulp-concat'),
       sourcemaps    = require('gulp-sourcemaps'),
@@ -12,124 +14,172 @@ const gulp          = require('gulp'),
       typescript    = require('gulp-typescript'),
       plumber       = require('gulp-plumber'),
       handlebars    = require('gulp-compile-handlebars'),
+      rename        = require('gulp-rename'),
       tsFileGlob    = require('tsconfig-glob'),
-      webpack       = require('webpack-stream'),
       del           = require('del'),
       mkdirp        = require('mkdirp'),
       child_process = require('child_process'),
-      path 			= require('path');
+      path 			= require('path'),
+      fs 			= require('fs');
 
 // typescript config
 const tsconfig = require('./tsconfig');
 
+// vendor files used
+let vendorScripts = [
+    'node_modules/es6-shim/es6-shim.js',
+    'node_modules/angular2/bundles/angular2-polyfills.js',
+    'node_modules/systemjs/dist/system.src.js',
+    'node_modules/rxjs/bundles/Rx.js',
+    'node_modules/angular2/bundles/angular2.js',
+    'node_modules/angular2/bundles/http.js',
+    'node_modules/angular2/bundles/router.js'
+];
+
 // Build Essentials
-gulp.task('build', ['clean', 'link', 'scss', 'ng-templates']);
-gulp.task('copy',  ['font-awesome']);
+gulp.task('build', seq('clean', 'scss', 'ng-templates'));
+gulp.task('link',  seq(['link-font-awesome', 'link-js']));
 
 // Build Types
-gulp.task('build:development', ['build', 'copy', 'tsconfig-glob', 'hbs-index', 'typescript', 'watch']);
+gulp.task('build:development', seq('build', 'link', ['tsconfig-glob', 'index-inject', 'typescript'], 'watch'));
 
 // component tasks
 
-// font-awesome
-gulp.task('font-awesome', function () {
-    gulp.src('./node_modules/font-awesome/fonts/*')
-        .pipe(gulp.dest('./dist/fonts'));
+// symlink files
+gulp.task('link-font-awesome', (done) => {
+    let fontFiles = fs.readdirSync('node_modules/font-awesome/fonts').map((file) => `node_modules/font-awesome/fonts/${file}`);
+    linkFilesTo(fontFiles, 'fonts');
+    return done();
 });
 
+
+gulp.task('link-js', (done) => {
+    linkFilesTo(vendorScripts, 'lib');
+    return done();
+});
+
+let linkFilesTo = (files, folder) => {
+
+    try {
+
+        files.forEach((file) => {
+
+            let fileName = path.basename(file),
+                fileLocation = path.join(__dirname, file),
+                linkLocation = path.join(__dirname, 'dist', folder, fileName);
+
+            child_process.exec(`ln -s ${fileLocation} ${linkLocation}`);
+
+        });
+
+    } catch(e) {
+        console.log(e);
+    }
+}
+
 // Clean
-gulp.task('clean', function () {
+gulp.task('clean', (done) => {
 
     mkdirp.sync('./dist');
     mkdirp.sync('./dist/js');
     mkdirp.sync('./dist/css');
     mkdirp.sync('./dist/fonts');
     mkdirp.sync('./dist/templates');
+    mkdirp.sync('./dist/lib');
 
-    return del([
-        './dist/fonts/*',
-        './src/**/*.js',
-        './dist/**/*.js',
-        './dist/**/*.css',
-        './dist/**/*.map',
-        './dist/**/*.html',
-    ]);
-
+    return done()
 });
 
 // ng-templates
-gulp.task('ng-templates', function () {
+gulp.task('ng-templates', (done) => {
+
     gulp.src('./src/templates/**/*.html')
-        .pipe(livereload())
-        .pipe(gulp.dest('./dist/templates'))
+        .pipe(gulp.dest('./dist/templates'));
+
+    return done();
 });
 
-// Link Bower folder
-gulp.task('link', function () {
-    // var node_modules = 'node_modules',
-    //     files = [''];
-    //
-    // try {
-    // 	child_process.execSync(['ln -s', path.join(__dirname, node_modules), __dirname + '/dist/node_modules'].join(' '));
-    // } catch(e) {
-    //
-    // }
+// TypeScript / Javascript
+gulp.task('typescript', (done) => {
+
+    gulp.src('src/ts/**/*.ts')
+        .pipe(typescript(typescript.createProject('./tsconfig.json')))
+        .pipe(gulp.dest('dist/js'));
+
+    return done();
 });
 
-// TypeScript
-gulp.task('typescript', function () {
+gulp.task('typescript-concat', (done) => {
+
     gulp.src('src/ts/**/*.ts')
         .pipe(plumber())
-        .pipe(webpack(require('./webpack.config.js')))
+        .pipe(typescript(typescript.createProject('./tsconfig.json')))
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(concat('boot.js'))
+        .pipe(sourcemaps.write('.'))
         .pipe(livereload())
-        .pipe(gulp.dest('.'));
+        .pipe(gulp.dest('dist/js'));
+
+    return done();
+
 });
 
-gulp.task('tslint', function() {
-    gulp.src('app/**/*.ts')
-        .pipe(tslint())
-        .pipe(tslint.report('verbose'));
-});
-
-gulp.task('tsconfig-glob', function () {
+// required if you aren't using atom-typescript
+gulp.task('tsconfig-glob', (done) => {
     // return tsFileGlob({
     //     configPath: '.',
     //     indent: 2
     // });
+    return done;
+});
+
+// vendor
+gulp.task('vendor-js-concat', () => {
+    gulp.src(vendorScripts)
+        .pipe(concat('vendor.js'))
+        .pipe(gulp.dest('dist/lib'));
 });
 
 // Handlebars
-gulp.task('hbs-index', function () {
-    var opts = {
-        ignorePartials: true,
-        partials : {},
-        batch : [],
-        helpers : {}
+gulp.task('index-inject', (done) => {
+
+    let opts = {
+        helpers: {
+            'script-tag': (file) => {
+                return `<script src="./lib/${path.basename(file)}"></script>`;
+            }
+        }
     },
     data = {
-        isProduction: (process.env.NODE_ENV === 'production')
+        vendorScripts: vendorScripts
     };
 
-    gulp.src('./src/index.html')
+    gulp.src('./src/index.hbs')
         .pipe(plumber())
         .pipe(handlebars(data, opts))
         .pipe(livereload())
+        .pipe(rename('index.html'))
         .pipe(gulp.dest('./dist'));
+
+    return done();
 });
 
 // SCSS
-gulp.task('scss', function () {
+gulp.task('scss', (done) => {
+
     gulp.src('./src/scss/main.scss')
         .pipe(plumber())
         .pipe(sass())
         .pipe(livereload())
         .pipe(gulp.dest('./dist/css'));
+
+    return done();
 });
 
 // watch
-gulp.task('watch', function() {
+gulp.task('watch', () => {
     livereload.listen();
     gulp.watch(['./src/scss/**/*.scss'],  ['scss']);
     gulp.watch(['./src/ts/**/*.ts'],  ['tsconfig-glob', 'typescript']);
-    gulp.watch(['./src/**/*.html'],  ['ng-templates', 'hbs-index']);
+    gulp.watch(['./src/**/*.html'],  ['ng-templates']);
 });
