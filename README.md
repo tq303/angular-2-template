@@ -39,7 +39,7 @@ Files are currently served from `./dist` which is created after the build step.
 
 ## TypeScript
 
-TypeScript is compiled using `webpack` and `ts-loader`. The `webpack.config.js` controls all of the Javascript compilation and is run as a `gulp` task. This eliminates the need for using the `tsd` module.
+Uses typescript.
 
 ## Notes
 
