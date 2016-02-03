@@ -75,10 +75,8 @@ app.delete('/auth/destroy', (req, res) => {
 app.get('/documents', (req, res) => {
 
 	gAuth.setCredentials({
-		// access_token: req.cookies.access_token,
-		// refresh_token: req.cookies.refresh_token
-        access_token: '1234',
-		refresh_token: '5678'
+		access_token: req.cookies.access_token,
+		refresh_token: req.cookies.refresh_token
 	});
 
 	drive.files.list({}, function(err, response) {
